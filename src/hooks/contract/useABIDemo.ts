@@ -7,7 +7,7 @@ import { Address } from 'viem';
 export const useABIDemo = () => {
   /** Params */
   const contractConfig = {
-    address: contracts.demo,
+    address: contracts.createCallAddress,
     abi: ABIDemo,
   };
 

@@ -1,11 +1,12 @@
 import * as wagmiChains from 'wagmi/chains';
+import { customChains } from './custom';
 
-export const chains = wagmiChains;
+export const chains = { ...wagmiChains, ...customChains };
 
 // 默认链
 export const DEFAULT_CHAIN = {
   PROD: chains.mainnet,
-  DEV: chains.sepolia,
+  DEV: customChains.customNet,
 };
 export const DEFAULT_CHAIN_CURRENT = env.VITE_ENV === 'prod' ? DEFAULT_CHAIN.PROD : DEFAULT_CHAIN.DEV;
 

@@ -137,8 +137,27 @@ export default () => {
     [publicClient, account.address, walletClient, submitTransaction, account.chainId]
   );
 
+  // 发送交易
+  const sendTransaction = async (params: { to: string; value: string; data: string }) => {
+    if (!walletClient || !publicClient) {
+      return;
+    }
+
+    const txHash = await walletClient.sendTransaction({
+      to: params.to as `0x${string}`,
+      value: BigInt(params.value),
+      data: params.data as `0x${string}`,
+    });
+
+    const txReceipt = await publicClient.waitForTransactionReceipt({
+      hash: txHash,
+      timeout: 60000,
+    });
+    return txReceipt;
+  };
+
   /** Return */
-  return { write, read, multicall };
+  return { write, read, multicall, sendTransaction };
 };
 
 /** Functions */
