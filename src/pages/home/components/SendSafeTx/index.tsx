@@ -61,7 +61,7 @@ export const SendSafeTx = () => {
         </div>
       </div>
 
-      <SignExecuteSafeTx safeAddress={state.safeAddress} safeTransaction={state.safeTransaction} />
+      <SignExecuteSafeTx safeAddress={state.safeAddress} safeTransaction={state.safeTransaction} setSafeTransaction={(v) => (state.safeTransaction = v)} />
     </div>
   );
 };

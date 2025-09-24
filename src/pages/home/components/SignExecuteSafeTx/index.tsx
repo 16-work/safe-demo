@@ -4,6 +4,7 @@ import { useSafe } from '@/hooks/useSafe';
 interface Props {
   safeAddress: string;
   safeTransaction?: SafeTransaction;
+  setSafeTransaction: (transaction: SafeTransaction) => void;
   onExecuted?: () => void;
 }
 
@@ -25,6 +26,7 @@ export const SignExecuteSafeTx = (props: Props) => {
       if (!protocolKit || !props.safeTransaction) return;
 
       const signedTransaction = await protocolKit.signTransaction(props.safeTransaction);
+      props.setSafeTransaction(signedTransaction);
       state.signatures = signedTransaction.signatures.size;
     },
     { manual: true }

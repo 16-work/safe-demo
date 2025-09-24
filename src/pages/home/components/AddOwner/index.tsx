@@ -56,7 +56,12 @@ export const AddOwner = () => {
       </div>
 
       <div className="flex flex-col gap-y-10">
-        <SignExecuteSafeTx safeAddress={state.safeAddress} safeTransaction={state.safeTransaction} onExecuted={refreshOwners} />
+        <SignExecuteSafeTx
+          safeAddress={state.safeAddress}
+          safeTransaction={state.safeTransaction}
+          setSafeTransaction={(v) => (state.safeTransaction = v)}
+          onExecuted={refreshOwners}
+        />
 
         <div>
           Owners:
