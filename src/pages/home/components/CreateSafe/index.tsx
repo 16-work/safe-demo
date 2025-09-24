@@ -14,14 +14,11 @@ export const CreateSafe = () => {
   });
 
   /** Actions */
-  const { run: onCreate, isLoading } = useRequest(
-    async () => {
-      const owners = state.otherOwners.split(';');
-      if (account.address) owners.unshift(account.address);
-      await createSafe(owners, state.threshold);
-    },
-    { manual: true }
-  );
+  const { run: onCreate, isLoading } = useLockFn(async () => {
+    const owners = state.otherOwners.split(';');
+    if (account.address) owners.unshift(account.address);
+    await createSafe(owners, state.threshold);
+  });
 
   /** Template */
   return (

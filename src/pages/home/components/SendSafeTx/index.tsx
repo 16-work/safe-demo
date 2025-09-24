@@ -18,23 +18,20 @@ export const SendSafeTx = () => {
   });
 
   /** Actions */
-  const { run: onCreate, isLoading } = useRequest(
-    async () => {
-      const protocolKit = await connectSafe(state.safeAddress);
-      if (!protocolKit) return;
+  const { run: onCreate, isLoading } = useLockFn(async () => {
+    const protocolKit = await connectSafe(state.safeAddress);
+    if (!protocolKit) return;
 
-      const threshold = await protocolKit.getThreshold();
-      state.threshold = threshold;
+    const threshold = await protocolKit.getThreshold();
+    state.threshold = threshold;
 
-      const safeTransaction = await protocolKit.createTransaction({
-        transactions: [{ to: state.to, value: state.value, data: '0x' }],
-        onlyCalls: true,
-      });
+    const safeTransaction = await protocolKit.createTransaction({
+      transactions: [{ to: state.to, value: state.value, data: '0x' }],
+      onlyCalls: true,
+    });
 
-      state.safeTransaction = safeTransaction;
-    },
-    { manual: true }
-  );
+    state.safeTransaction = safeTransaction;
+  });
 
   /** Template */
   return (

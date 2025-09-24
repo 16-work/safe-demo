@@ -17,27 +17,24 @@ export const AddOwner = () => {
 
   /** Actions */
   const refreshOwners = async () => {
+    if (!state.safeAddress) return;
     const protocolKit = await connectSafe(state.safeAddress);
-    if (!protocolKit) return;
-    state.owners = await protocolKit.getOwners();
+    if (protocolKit) state.owners = await protocolKit.getOwners();
   };
   useAsyncEffect(async () => {
     refreshOwners();
   }, [state.safeAddress]);
 
-  const { run: onAdd, isLoading } = useRequest(
-    async () => {
-      const protocolKit = await connectSafe(state.safeAddress);
-      if (!protocolKit) return;
+  const { run: onAdd, isLoading } = useLockFn(async () => {
+    const protocolKit = await connectSafe(state.safeAddress);
+    if (!protocolKit) return;
 
-      const safeTransaction = await protocolKit.createAddOwnerTx({
-        ownerAddress: state.newOwner,
-      });
+    const safeTransaction = await protocolKit.createAddOwnerTx({
+      ownerAddress: state.newOwner,
+    });
 
-      state.safeTransaction = safeTransaction;
-    },
-    { manual: true }
-  );
+    state.safeTransaction = safeTransaction;
+  });
 
   /** Template */
   return (

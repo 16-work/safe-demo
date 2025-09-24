@@ -30,23 +30,19 @@ export const SignExecuteSafeTx = (props: Props) => {
     { manual: true }
   );
 
-  const { run: onExecute, isLoading: loadingExecute } = useRequest(
-    async () => {
-      console.log('Execute');
-      console.log(props.safeTransaction, state.signatures, state.threshold);
+  const { run: onExecute, isLoading: loadingExecute } = useLockFn(async () => {
+    if (props.safeTransaction && state.signatures >= state.threshold) {
+      const protocolKit = await connectSafe(props.safeAddress);
+      if (!protocolKit) return;
 
-      if (props.safeTransaction && state.signatures >= state.threshold) {
-        const protocolKit = await connectSafe(props.safeAddress);
-        if (!protocolKit) return;
-
-        await protocolKit.executeTransaction(props.safeTransaction);
-        props.onExecuted && props.onExecuted();
-      }
-    },
-    { manual: true }
-  );
+      await protocolKit.executeTransaction(props.safeTransaction);
+      props.onExecuted && props.onExecuted();
+    }
+  });
 
   useAsyncEffect(async () => {
+    if (!props.safeAddress) return;
+
     const protocolKit = await connectSafe(props.safeAddress);
     if (!protocolKit) return;
     state.threshold = await protocolKit.getThreshold();

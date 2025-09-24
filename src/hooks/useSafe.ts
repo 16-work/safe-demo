@@ -35,7 +35,6 @@ export const useSafe = () => {
   const createSafe = async (owners: string[], threshold: number) => {
     if (!connector) return;
     const provider = (await connector?.getProvider()) as Eip1193Provider;
-    console.log('provide: ', provider);
 
     const predictedSafe: PredictedSafeProps = {
       safeAccountConfig: {
@@ -66,7 +65,6 @@ export const useSafe = () => {
   const connectSafe = async (safeAddress: string, signer?: string) => {
     if (!connector) return;
     const provider = (await connector?.getProvider()) as Eip1193Provider;
-    console.log(provider);
 
     const safeConfig = {
       provider: provider ?? rpcUrl,
