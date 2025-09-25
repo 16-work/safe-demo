@@ -1,4 +1,4 @@
-import Safe, { Eip1193Provider, PredictedSafeProps } from '@safe-global/protocol-kit';
+import Safe, { Eip1193Provider, PredictedSafeProps, SafeConfig } from '@safe-global/protocol-kit';
 import { getSafeAddressFromDeploymentTx } from '@safe-global/protocol-kit';
 import { contracts } from '@/constants/contracts';
 
@@ -9,10 +9,6 @@ export const useSafe = () => {
   const { connector } = useAccount();
 
   /** Params */
-  const rpcUrl = useMemo(() => {
-    return account.chain?.rpcUrls.default.http[0] || '';
-  }, [account.chainId]);
-
   const contractNetworks = useMemo(() => {
     if (!account.chainId) return undefined;
 
@@ -34,7 +30,7 @@ export const useSafe = () => {
   /** Actions */
   const createSafe = async (owners: string[], threshold: number) => {
     if (!connector) return;
-    const provider = (await connector?.getProvider()) as Eip1193Provider;
+    const provider = (await connector.getProvider()) as Eip1193Provider;
 
     const predictedSafe: PredictedSafeProps = {
       safeAccountConfig: {
@@ -46,12 +42,13 @@ export const useSafe = () => {
       },
     };
 
-    const protocolKit = await Safe.init({
-      provider: provider ?? rpcUrl,
+    const safeConfig: SafeConfig = {
+      provider: provider,
       signer: account.address,
       predictedSafe,
       contractNetworks,
-    });
+    };
+    const protocolKit = await Safe.init(safeConfig);
 
     const transaction = await protocolKit.createSafeDeploymentTransaction();
     const transactionReceipt = await hooks.contract.sendTransaction(transaction);
@@ -64,18 +61,15 @@ export const useSafe = () => {
 
   const connectSafe = async (safeAddress: string, signer?: string) => {
     if (!connector) return;
-    const provider = (await connector?.getProvider()) as Eip1193Provider;
+    const provider = (await connector.getProvider()) as Eip1193Provider;
 
-    const safeConfig = {
-      provider: provider ?? rpcUrl,
+    const safeConfig: SafeConfig = {
+      provider: provider,
       signer: signer ?? account.address,
       safeAddress,
-    };
-
-    const protocolKit = await Safe.init({
-      ...safeConfig,
       contractNetworks,
-    });
+    };
+    const protocolKit = await Safe.init(safeConfig);
 
     return protocolKit;
   };
